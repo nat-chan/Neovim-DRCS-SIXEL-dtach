@@ -1,0 +1,13 @@
+name: hello
+
+on:
+  deployment:
+  schedule:
+    - cron: "*/10 * * * *"
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: date
+        run: date
+# vim: tabstop=2 shiftwidth=2 expandtab
