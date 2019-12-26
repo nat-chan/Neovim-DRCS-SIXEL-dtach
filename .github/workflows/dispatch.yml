@@ -3,15 +3,12 @@ name: hello
 on:
   push:
   repository_dispatch:
-  schedule:
-    - cron: "*/10 * * * *"
+#  schedule:
+#    - cron: "*/10 * * * *"
 jobs:
   example:
     runs-on: ubuntu-latest
     steps:
-      - name: date
-        run: |
-          date > out
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
         with:
@@ -27,6 +24,7 @@ jobs:
           GOPATH: /home/runner/work/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          date | tee out
           go get -u github.com/tcnksm/ghr
           $GOPATH/bin/ghr nightly out
 # vim: tabstop=2 shiftwidth=2 expandtab
