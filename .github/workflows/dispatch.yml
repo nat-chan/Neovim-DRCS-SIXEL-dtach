@@ -20,24 +20,13 @@ jobs:
           cd neovim
           sed -e 's;^set(LIBVTERM_URL.*$;set(LIBVTERM_URL https://github.com/nat-chan/libvterm-0.1.2-DRCS-SIXEl/archive/3884ebe4e5c02f078754115aa5ceac0b83bdc16a.tar.gz);' \
               -e 's;^set(LIBVTERM_SHA256.*$;set(LIBVTERM_SHA256 c5166abbb81d1aeb8c74229fc46982433d3932223d338e8f7e6fcc4ff17e5473);' -i ./third-party/CMakeLists.txt
-          make CMAKE_BUILD_TYPE=RelWithDebInfo \
-               CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../appdir/usr -DCMAKE_INSTALL_MANDIR=man"
-          make install
+          make appimage
           cd ..
 
-      - name: build appimage
+      - name: check tree
         run: |
-          mkdir -p "./appdir/usr/share/metainfo/"
-          cp "neovim/runtime/nvim.appdata.xml" "./appdir/usr/share/metainfo/"
-          echo '#!/bin/bash' >> ./appdir/AppRun
-          echo 'unset ARGV0' >> ./appdir/AppRun
-          echo 'exec "$(dirname "$(readlink  -f "${0}")")/usr/bin/nvim" ${@+"$@"}' >> ./appdir/AppRun
-          chmod 755 ./appdir/AppRun
-          curl -Lo ./linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          chmod 755 ./linuxdeploy-x86_64.AppImage
-          OUTPUT=nvim.appimage ./linuxdeploy-x86_64.AppImage --appdir ./appdir/ \
-                                     -d neovim/runtime/nvim.desktop \
-                                     -i neovim/runtime/nvim.png --output appimage
+          apt instal -y tree
+          tree neovim
 
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
@@ -52,5 +41,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           go get -u github.com/tcnksm/ghr
-          $GOPATH/bin/ghr nightly nvim.appimage
+          $GOPATH/bin/ghr nightly neovim/build/nvim.appimage
 # vim: tabstop=2 shiftwidth=2 expandtab
