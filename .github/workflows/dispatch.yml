@@ -1,10 +1,11 @@
 name: hello
 
 on:
-  push:
+#  push:
   repository_dispatch:
-#  schedule:
-#    - cron: "*/10 * * * *"
+  schedule:
+    - cron: "0 0 * * *"
+
 jobs:
   example:
     runs-on: ubuntu-latest
@@ -23,11 +24,6 @@ jobs:
           make appimage
           cd ..
 
-      - name: check tree
-        run: |
-          apt instal -y tree
-          tree neovim
-
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
         with:
@@ -41,5 +37,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           go get -u github.com/tcnksm/ghr
-          $GOPATH/bin/ghr nightly neovim/build/nvim.appimage
+          $GOPATH/bin/ghr nightly neovim/build/bin/nvim.appimage
 # vim: tabstop=2 shiftwidth=2 expandtab
