@@ -24,18 +24,19 @@ jobs:
                CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../appdir/usr -DCMAKE_INSTALL_MANDIR=man"
           make install
           cd ..
+
       - name: build appimage
         run: |
           mkdir -p "./appdir/usr/share/metainfo/"
-          cp "./runtime/nvim.appdata.xml" "./appdir/usr/share/metainfo/"
+          cp "neovim/runtime/nvim.appdata.xml" "./appdir/usr/share/metainfo/"
           echo '#!/bin/bash' >> ./appdir/AppRun
           echo 'unset ARGV0' >> ./appdir/AppRun
           echo 'exec "$(dirname "$(readlink  -f "${0}")")/usr/bin/nvim" ${@+"$@"}' >> ./appdir/AppRun
           chmod 755 ./appdir/AppRun
           curl -Lo ./linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod 755 ./linuxdeploy-x86_64.AppImage
-          ./linuxdeploy-x86_64.AppImage --appimage-extract
-          OUTPUT=nvim.appimage ./squashfs-root/AppRun --appdir ./appdir/ \
+#          ./linuxdeploy-x86_64.AppImage --appimage-extract
+          OUTPUT=nvim.appimage ./linuxdeploy-x86_64.AppImage --appdir ./appdir/ \
                                      -d neovim/runtime/nvim.desktop \
                                      -i neovim/runtime/nvim.png --output appimage
 
