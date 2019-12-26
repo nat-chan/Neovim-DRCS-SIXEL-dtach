@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: date
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           date > out
       - name: Release
-        uses: fnkr/github-action-ghr@v1
+        uses: actions/setup-go@v1
         env:
-          GHR_PATH: out
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          go get -u github.com/tcnksm/ghr
+          $GOPATH/bin/ghr nightly out
 # vim: tabstop=2 shiftwidth=2 expandtab
