@@ -9,5 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: date
-        run: date
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          date
+          pwd
+          ls
+          uname -a
 # vim: tabstop=2 shiftwidth=2 expandtab
