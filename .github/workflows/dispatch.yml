@@ -1,6 +1,7 @@
 name: hello
 
 on:
+  push:
   repository_dispatch:
   schedule:
     - cron: "*/10 * * * *"
@@ -13,6 +14,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           date
+          pwd
+          ls
+          cd ..
+          pwd
+          ls
+          cd ..
           pwd
           ls
           uname -a
