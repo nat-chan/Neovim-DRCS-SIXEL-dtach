@@ -9,22 +9,46 @@ jobs:
   example:
     runs-on: ubuntu-latest
     steps:
+      - name: apt
+        run: |
+          sudo apt update
+          sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git
+
+      - name: build neovim
+        run: |
+          git clone https://github.com/neovim/neovim -b nightly
+          cd neovim
+          sed -e 's;^set(LIBVTERM_URL.*$;set(LIBVTERM_URL https://github.com/nat-chan/libvterm-0.1.2-DRCS-SIXEl/archive/3884ebe4e5c02f078754115aa5ceac0b83bdc16a.tar.gz);' \
+              -e 's;^set(LIBVTERM_SHA256.*$;set(LIBVTERM_SHA256 c5166abbb81d1aeb8c74229fc46982433d3932223d338e8f7e6fcc4ff17e5473);' -i ./third-party/CMakeLists.txt
+          make CMAKE_BUILD_TYPE=RelWithDebInfo \
+               CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=./appdir/usr -DCMAKE_INSTALL_MANDIR=man"
+          make install
+          mkdir "./appdir/usr/share/metainfo/"
+          cp "./runtime/nvim.appdata.xml" "./appdir/usr/share/metainfo/"
+          echo '#!/bin/bash' >> ./appdir/AppRun
+          echo 'unset ARGV0' >> ./appdir/AppRun
+          echo 'exec "$(dirname "$(readlink  -f "${0}")")/usr/bin/nvim" ${@+"$@"}' >> ./appdir/AppRun
+          chmod 755 ./appdir/AppRun
+          curl -Lo ./linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod 755 ./linuxdeploy-x86_64.AppImage
+          ./linuxdeploy-x86_64.AppImage --appimage-extract
+          OUTPUT=nvim.appimage ./squashfs-root/AppRun --appdir ./appdir/ \
+                                     -d ./runtime/nvim.desktop \
+                                     -i ./runtime/nvim.png --output appimage
+          cd ..
+
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
         with:
           version: 1.12
         id: go
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@master
-
-      - name: Build
+      - name: Release
         env:
           GO111MODULE: on
           GOPATH: /home/runner/work/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          date | tee out
           go get -u github.com/tcnksm/ghr
-          $GOPATH/bin/ghr nightly out
+          $GOPATH/bin/ghr nightly neovim/nvim.appimage
 # vim: tabstop=2 shiftwidth=2 expandtab
