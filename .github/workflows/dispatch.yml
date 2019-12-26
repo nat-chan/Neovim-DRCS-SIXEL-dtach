@@ -35,7 +35,6 @@ jobs:
           chmod 755 ./appdir/AppRun
           curl -Lo ./linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod 755 ./linuxdeploy-x86_64.AppImage
-#          ./linuxdeploy-x86_64.AppImage --appimage-extract
           OUTPUT=nvim.appimage ./linuxdeploy-x86_64.AppImage --appdir ./appdir/ \
                                      -d neovim/runtime/nvim.desktop \
                                      -i neovim/runtime/nvim.png --output appimage
