@@ -12,8 +12,8 @@ jobs:
       - name: date
         run: |
           date > out
+      - uses: actions/setup-go@v1
       - name: Release
-        uses: actions/setup-go@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
