@@ -12,9 +12,19 @@ jobs:
       - name: date
         run: |
           date > out
-      - uses: actions/setup-go@v1
-      - name: Release
+      - name: Set up Go 1.12
+        uses: actions/setup-go@v1
+        with:
+          version: 1.12
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@master
+
+      - name: Build
         env:
+          GO111MODULE: on
+          GOPATH: /home/runner/work/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           go get -u github.com/tcnksm/ghr
