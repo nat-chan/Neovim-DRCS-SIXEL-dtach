@@ -25,6 +25,7 @@ jobs:
           sed -e 's;^set(LIBVTERM_URL.*$;set(LIBVTERM_URL https://github.com/nat-chan/libvterm-0.1.2-DRCS-SIXEl/archive/3884ebe4e5c02f078754115aa5ceac0b83bdc16a.tar.gz);' \
               -e 's;^set(LIBVTERM_SHA256.*$;set(LIBVTERM_SHA256 c5166abbb81d1aeb8c74229fc46982433d3932223d338e8f7e6fcc4ff17e5473);' -i ./third-party/CMakeLists.txt
           sed -e 's;^EOF$;EOF\ncp $(which dtach) usr/bin/\ncat << '"'"EOF"'"' > AppRun\n#!/bin/bash\nunset ARGV0\nroot=$(dirname "$(readlink  -f "${0}")")\nexec "$root/usr/bin/dtach" -A /tmp/nvim-dtach -r winch -E "$root/usr/bin/nvim" ${@+"$@"}\nEOF\n;' \
+              -i scripts/genappimage.sh
           make appimage
           cd ..
 
