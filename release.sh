@@ -14,17 +14,19 @@ eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:al
 
 if [ "$id" ] ;then
     echo Delete existing release $id
-    curl -sH "$AUTH" -X DELETE "$GH_REPO/releases/$id"
+    response=$(curl -sH "$AUTH" -X DELETE "$GH_REPO/releases/$id")
+    echo $response|jq
 fi
 
 echo Create release
 response=$(curl -sH "$AUTH" \
                 --data "{\"tag_name\": \"$tag\",\"name\": \"Release $tag\",\"body\": \"Neovim AppImage\"}" \
                 "$GH_REPO/releases")
+echo $response|jq
 eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')
 
 echo "Uploading asset... "
 GH_ASSET="https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$id/assets?name=$(basename $filename)"
 
-curl --data-binary @"$filename" -H "$AUTH" -H "Content-Type: application/octet-stream" $GH_ASSET
-echo 
+release=$(curl -s --data-binary @"$filename" -H "$AUTH" -H "Content-Type: application/octet-stream" $GH_ASSET)
+echo $response|jq

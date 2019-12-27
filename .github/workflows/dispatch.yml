@@ -13,7 +13,7 @@ jobs:
       - name: apt
         run: |
           sudo apt update
-          sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git dtach
+          sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git dtach jq
 
       - name: checkout
         uses: actions/checkout@master
