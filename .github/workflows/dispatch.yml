@@ -13,7 +13,7 @@ jobs:
       - name: apt
         run: |
           sudo apt update
-          sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git dtach jq
+          sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git dtach
 
       - name: checkout
         uses: actions/checkout@master
@@ -34,5 +34,7 @@ jobs:
       - name: Release
         run: |
           ./release.sh nightly
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
 # vim: tabstop=2 shiftwidth=2 expandtab
