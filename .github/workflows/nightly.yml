@@ -1,10 +1,10 @@
-name: hello
+name: nightly
 
 on:
-  push:
-  repository_dispatch:
-#  schedule:
-#    - cron: "0 0 * * *"
+#  push:
+#  repository_dispatch:
+  schedule:
+    - cron: "0 15 * * *"
 
 jobs:
   example:
