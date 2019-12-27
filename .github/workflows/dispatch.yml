@@ -20,7 +20,7 @@ jobs:
 
       - name: build neovim
         run: |
-          git clone https://github.com/neovim/neovim -b v0.4.2
+          git clone https://github.com/neovim/neovim -b nightly
           cd neovim
           sed -e 's;^set(LIBVTERM_URL.*$;set(LIBVTERM_URL https://github.com/nat-chan/libvterm-0.1.2-DRCS-SIXEl/archive/3884ebe4e5c02f078754115aa5ceac0b83bdc16a.tar.gz);' \
               -e 's;^set(LIBVTERM_SHA256.*$;set(LIBVTERM_SHA256 c5166abbb81d1aeb8c74229fc46982433d3932223d338e8f7e6fcc4ff17e5473);' -i ./third-party/CMakeLists.txt
@@ -28,26 +28,11 @@ jobs:
               -i scripts/genappimage.sh
           make appimage
           cd ..
+          mv ./neovim/build/bin/nvim.appimage ./
+          rm -rf neovim
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v0.4.2
-          release_name: Release v0.4.2
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./neovim/build/bin/nvim.appimage
-          asset_name: nvim.appimage
-          asset_content_type: application/zip
+      - name: Release
+        run: |
+          ./release.sh nightly
 
 # vim: tabstop=2 shiftwidth=2 expandtab
