@@ -1,0 +1,41 @@
+name: stable
+
+on:
+#  push:
+  repository_dispatch:
+  schedule:
+    - cron: "0 16 * * *"
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+
+      - name: all
+        run: |
+          tag=$(./list.sh)
+          echo $tag
+          if [ $tag ];then
+            sudo apt update
+            sudo apt install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl git dtach
+            git clone https://github.com/neovim/neovim -b $tag
+            cd neovim
+            sed -e 's;^set(LIBVTERM_URL.*$;set(LIBVTERM_URL https://github.com/nat-chan/libvterm-0.1.2-DRCS-SIXEl/archive/3884ebe4e5c02f078754115aa5ceac0b83bdc16a.tar.gz);' \
+                -e 's;^set(LIBVTERM_SHA256.*$;set(LIBVTERM_SHA256 c5166abbb81d1aeb8c74229fc46982433d3932223d338e8f7e6fcc4ff17e5473);' -i ./third-party/CMakeLists.txt
+            sed -e 's;^EOF$;EOF\ncp $(which dtach) usr/bin/\ncat << '"'"EOF"'"' > AppRun\n#!/bin/bash\nunset ARGV0\nroot=$(dirname "$(readlink  -f "${0}")")\nexec "$root/usr/bin/dtach" -A /tmp/nvim-dtach -r winch -E "$root/usr/bin/nvim" ${@+"$@"}\nEOF\n;' \
+                -i scripts/genappimage.sh
+            make appimage
+            cd ..
+            mv ./neovim/build/bin/nvim.appimage ./
+            rm -rf neovim
+            ./release.sh $tag
+          else
+            echo nothing is new.
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+# vim: tabstop=2 shiftwidth=2 expandtab
