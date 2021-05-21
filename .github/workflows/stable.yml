@@ -3,6 +3,7 @@ name: stable
 on:
 #  push:
   repository_dispatch:
+    types: [stable_trigger]
   schedule:
     - cron: "0 16 * * *"
 

@@ -2,7 +2,8 @@ name: nightly
 
 on:
 #  push:
-#  repository_dispatch:
+  repository_dispatch:
+    types: [nightly_trigger]
   schedule:
     - cron: "0 15 * * *"
 
